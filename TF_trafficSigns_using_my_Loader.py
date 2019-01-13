@@ -21,47 +21,63 @@ Data = Loader.load_data(Directory)
 images, labels = Data
 
 #Printing out data from image 0
-img = np.array(images)
-print (img.ndim)
-print (img.size)
-print (img[0])
-#print (labels)
+data_sample_print = input("Would you like to print a data point?(y/n): ")
+if data_sample_print == "y":
+    img = np.array(images)
+    print(img.ndim)
+    print(img.size)
+    print(img[0])
+    # print (labels)
+elif data_sample_print == "n":
+    pass
+else:
+    ("Entry not valid!")
+    exit()
+
+
 
 #Creating plot to understand the data
-plt.figure(100)
-histo = plt.hist(labels, 62)
-
-
-#Printing out 4 data sample (namely 300, 2250, 3650, 4000) to understand differences within the dataset
-
-samples = []
-for n in range(4):
-    samples.append(rn.randint(0,4001))
-
-
-
-for item in range(len(samples)):
-    plt.figure(101)
-
-    txt = "Shape: {0} ; min: {1} ; max: {2}".format(images[samples[item]].shape,
-                                                    images[samples[item]].min(),
-                                                    images[samples[item]].max())
-    #plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment="center", fontsize=6) --> Set the txt only at the botton of the subplot window
-    plt.subplot(4, 1, item + 1).set_title(txt, fontsize=8)
-    plt.imshow(images[samples[item]])
-    plt.subplots_adjust(hspace=1)
-    plt.axis("off")
+plot_hist_print = input("Would you like to print an histogram of the data distribution?(y/n): ")
+if plot_hist_print == "y":
+    plt.figure(100)
+    histo = plt.hist(labels, 62)
+    plt.show()
+elif plot_hist_print == "n":
+    pass
+else:
+    ("Entry not valid!")
+    exit()
 
 
 
-plt.get_current_fig_manager().show()
-plt.get_current_fig_manager().show()
 
-plt.show()
-plt.show()
+#Printing out 4 random data sample to understand differences within the dataset
+random_sample_data= input("Would you like to visualize 4 random dat samples ?(y/n): ")
+if random_sample_data == "y":
+    samples = []
+    for n in range(4):
+        samples.append(rn.randint(0, 4001))
 
-#Set unique labels
-unique_labels = set(labels)
+    for item in range(len(samples)):
+        plt.figure(101)
+
+        txt = "Shape: {0} ; min: {1} ; max: {2}".format(images[samples[item]].shape,
+                                                        images[samples[item]].min(),
+                                                        images[samples[item]].max())
+        # plt.figtext(0.5, 0.01, txt, wrap=True, horizontalalignment="center", fontsize=6) --> Set the txt only at the botton of the subplot window
+        plt.subplot(4, 1, item + 1).set_title(txt, fontsize=8)
+        plt.imshow(images[samples[item]])
+        plt.subplots_adjust(hspace=1)
+        plt.axis("off")
+
+    plt.show()
+elif random_sample_data == "n":
+    pass
+else:
+    ("Entry not valid!")
+    exit()
+
+
 
 #Initialize figure
 
@@ -83,12 +99,10 @@ for lbl in unique_labels:
 
 plt.show()"""
 
+#Set unique labels
+unique_labels = set(labels)
 
-
-
-
-
-
+#Plot 1 data sample per label
 figure2 = plt.figure(103, figsize=(15,15))
 i = 1
 
@@ -185,6 +199,8 @@ print("images_flat: ", x_flat)
 print("logits: ", logits)
 print("loss: ", loss)
 print("predicted_labels: ", correct_pred)
+
+
 
 
 
