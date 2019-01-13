@@ -157,9 +157,34 @@ for lbl in unique_labels:
 
 plt.show()
 
+#Initialize the placeholders
+x = tf.placeholder(dtype=tf.float32, shape=[None, 28, 28])
+y = tf.placeholder(dtype=tf.int32, shape=[None])
 
+#Flatten he inputdata
+x_flat = tf.contrib.layers.flatten(x)
 
+#Create fully connected layers
+logits = tf.contrib.layers.fully_connected(x_flat, 62, tf.nn.relu)
 
+#Define Loss Function
+loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(labels=y,
+                                                                     logits=logits))
+
+#Define Optimizer
+optimizer = tf.train.AdamOptimizer(learning_rate=0.001).minimize(loss)
+
+#Convert Logits to label indexes
+correct_pred = tf.arg_max(logits,1)
+
+#Define accuracy metric
+accuracy = tf.reduce_mean(tf.cast(correct_pred,tf.float32))
+
+#Recap of the above code
+print("images_flat: ", x_flat)
+print("logits: ", logits)
+print("loss: ", loss)
+print("predicted_labels: ", correct_pred)
 
 
 
