@@ -239,3 +239,47 @@ for i in range(201):
         print("Loss:",loss)
     print ("Epochs over.")
 
+"""----------------------------------------Running Evaluation------------------------------------"""
+#Generating 10 sample to validate
+validation_choice = input("Would you like to validate the accuracy of your model?(y/n): ")
+if validation_choice == "y":
+    n_of_s = int(input("How many sample do you want to validate: ").strip())
+    if n_of_s > 0:
+        sample_indexes = rn.sample(range(len(img28_gs)), n_of_s)
+        sample_images = [img28_gs[i] for i in sample_indexes]
+        sample_labels = [labels[i] for i in sample_indexes]
+
+        #Run correct prediction operation
+        predicted = sess.run([correct_pred], feed_dict={x:sample_images})[0]
+
+        #Print real and predicted labels
+        print(predicted)
+        print(sample_labels)
+
+        #Display prediction in matplot
+        plt.figure(106, figsize=(15, 15))
+        for i in range(len(sample_images)):
+            truth = sample_labels[i]
+            prediction = predicted[i]
+            plt.subplot(5, int(n_of_s/5), 1+i)
+            plt.axis("off")
+            color = "green" if prediction == truth else "red"
+            plt.text(40,10, "truth: {0} \n prediction: {1}".format(truth,prediction), fontsize=8,color=color)
+            plt.imshow(sample_images[i], cmap="gray")
+        plt.show()
+
+    else:
+        ("Entry not valid!")
+        exit()
+
+elif validation_choice == "n":
+    pass
+else:
+    ("Entry not valid!")
+    exit()
+
+
+
+
+
+
