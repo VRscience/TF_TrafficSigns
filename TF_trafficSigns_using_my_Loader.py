@@ -20,10 +20,12 @@ Data = Loader.load_data(Directory)
 
 images, labels = Data
 
+#Turning images list into array
+img = np.array(images)
+
 #Printing out data from image 0
 data_sample_print = input("Would you like to print a data point?(y/n): ")
 if data_sample_print == "y":
-    img = np.array(images)
     print(img.ndim)
     print(img.size)
     print(img[0])
@@ -33,7 +35,6 @@ elif data_sample_print == "n":
 else:
     ("Entry not valid!")
     exit()
-
 
 
 #Creating plot to understand the data
@@ -49,10 +50,8 @@ else:
     exit()
 
 
-
-
 #Printing out 4 random data sample to understand differences within the dataset
-random_sample_data= input("Would you like to visualize 4 random dat samples ?(y/n): ")
+random_sample_data= input("Would you like to visualize 4 random data samples ?(y/n): ")
 if random_sample_data == "y":
     samples = []
     for n in range(4):
@@ -103,47 +102,60 @@ plt.show()"""
 unique_labels = set(labels)
 
 #Plot 1 data sample per label
-figure2 = plt.figure(103, figsize=(15,15))
-i = 1
+full_sample_data= input("Would you like to visualize one data samples per each category?(y/n): ")
+if full_sample_data == "y":
+    figure2 = plt.figure(103, figsize=(15, 15))
+    i = 1
 
-for lbl in unique_labels:
+    for lbl in unique_labels:
+        plt.subplot(8, 8, i)
+        plt.axis("off")
+        txt = "ID {0} : Count ({1}) : IMG({2})".format(lbl,
+                                                       labels.count(lbl),
+                                                       labels.index(lbl))
+        plt.title(txt, fontsize=5)
+        i += 1
+        plt.imshow(images[labels.index(lbl)])
 
-    plt.subplot(8,8,i)
-    plt.axis("off")
-    txt = "ID {0} : Count ({1}) : IMG({2})".format(lbl,
-                                                   labels.count(lbl),
-                                                   labels.index(lbl))
-    plt.title(txt, fontsize=5)
-    i+=1
-    plt.imshow(images[labels.index(lbl)])
+    plt.show()
 
-plt.show()
-
+elif full_sample_data == "n":
+    pass
+else:
+    ("Entry not valid!")
+    exit()
 
 #Resize Images to 28x28 into images28
 images28 = [sk.transform.resize(image, (28,28)) for image in img]
 #Convert to array into img28
 img28 = np.array(images28)
 #print img28 array size
-print (img28.shape)
+#print (img28.shape)
 
 
 #The following line will reprint the figure as above but with the new size
-figure3 = plt.figure(104, figsize=(15,15))
-i = 1
+full_sample_resized_data= input("Data has been resized. Would you like to visualize one data samples per each category?(y/n): ")
+if full_sample_resized_data == "y":
+    figure3 = plt.figure(104, figsize=(15, 15))
+    i = 1
 
-for lbl in unique_labels:
+    for lbl in unique_labels:
+        plt.subplot(8, 8, i)
+        plt.axis("off")
+        txt = "ID {0} : Count ({1}) : IMG({2})".format(lbl,
+                                                       labels.count(lbl),
+                                                       labels.index(lbl))
+        plt.title(txt, fontsize=5)
+        i += 1
+        plt.imshow(img28[labels.index(lbl)])
 
-    plt.subplot(8,8,i)
-    plt.axis("off")
-    txt = "ID {0} : Count ({1}) : IMG({2})".format(lbl,
-                                                   labels.count(lbl),
-                                                   labels.index(lbl))
-    plt.title(txt, fontsize=5)
-    i+=1
-    plt.imshow(img28[labels.index(lbl)])
+    plt.show()
 
-plt.show()
+elif full_sample_resized_data == "n":
+    pass
+else:
+    ("Entry not valid!")
+    exit()
 
 #Convert imges28 to greyscale
 
@@ -151,25 +163,39 @@ Images28_GS = [sk.color.rgb2gray(image_gs) for image_gs in img28]
 
 img28_gs = np.array(Images28_GS)
 
-print (img28_gs.shape)
+#print (img28_gs.shape)
 
 
 #The following line will reprint the figure as above but with the new size and grayscale
-figure4 = plt.figure(105, figsize=(15,15))
-i = 1
+full_sample_resized_grey_data= input("Resized images has been turned into grey scale. Would you like to visualize one data samples per each category?(y/n): ")
+if full_sample_resized_grey_data == "y":
+    figure4 = plt.figure(105, figsize=(15, 15))
+    i = 1
 
-for lbl in unique_labels:
+    for lbl in unique_labels:
+        plt.subplot(8, 8, i)
+        plt.axis("off")
+        txt = "ID {0} : Count ({1}) : IMG({2})".format(lbl,
+                                                       labels.count(lbl),
+                                                       labels.index(lbl))
+        plt.title(txt, fontsize=5)
+        i += 1
+        plt.imshow(img28_gs[labels.index(lbl)], cmap="gray")
 
-    plt.subplot(8,8,i)
-    plt.axis("off")
-    txt = "ID {0} : Count ({1}) : IMG({2})".format(lbl,
-                                                   labels.count(lbl),
-                                                   labels.index(lbl))
-    plt.title(txt, fontsize=5)
-    i+=1
-    plt.imshow(img28_gs[labels.index(lbl)], cmap="gray")
+    plt.show()
 
-plt.show()
+elif full_sample_resized_grey_data == "n":
+    pass
+else:
+    ("Entry not valid!")
+    exit()
+
+
+
+""""--------------------------Tensorflow part starts here----------------------------------------"""
+
+
+
 
 #Initialize the placeholders
 x = tf.placeholder(dtype=tf.float32, shape=[None, 28, 28])
