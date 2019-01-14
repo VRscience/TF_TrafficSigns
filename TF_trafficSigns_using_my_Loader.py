@@ -226,16 +226,16 @@ print("logits: ", logits)
 print("loss: ", loss)
 print("predicted_labels: ", correct_pred)
 
+#Running the NN
 
+tf.set_random_seed(1234)
+sess = tf.Session()
+sess.run(tf.global_variables_initializer())
 
-
-
-
-
-
-
-
-
-
-
+for i in range(201):
+    print("EPOCH", i)
+    _, accuracy_val = sess.run([optimizer, accuracy], feed_dict={x: img28_gs, y:labels})
+    if i%10==0:
+        print("Loss:",loss)
+    print ("Epochs over.")
 
