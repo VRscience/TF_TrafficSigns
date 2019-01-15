@@ -311,8 +311,6 @@ img28_gs_test = sk.color.rgb2gray(img28_test)
 
 """------------------------Running Evaluation against Test Data----------------------------------"""
 
-"""sess2 = tf.Session()
-sess2.run(tf.global_variables_initializer())"""
 
 #Run prediction
 
