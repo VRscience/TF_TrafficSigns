@@ -215,7 +215,7 @@ loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(labels=y,
 optimizer = tf.train.AdamOptimizer(learning_rate=0.001).minimize(loss)
 
 #Convert Logits to label indexes
-correct_pred = tf.arg_max(logits,1)
+correct_pred = tf.argmax(logits,1)
 
 #Define accuracy metric
 accuracy = tf.reduce_mean(tf.cast(correct_pred,tf.float32))
@@ -232,15 +232,17 @@ tf.set_random_seed(1234)
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
-for i in range(201):
+Epochs = int(input("Please insert epochs number-->"))
+for i in range(Epochs+1):
     print("EPOCH", i)
-    _, accuracy_val = sess.run([optimizer, accuracy], feed_dict={x: img28_gs, y:labels})
+    _, accuracy_val, loss_val = sess.run([optimizer, accuracy, loss], feed_dict={x: img28_gs, y: labels})
     if i%10==0:
-        print("Loss:",loss)
+        print("Loss:",loss_val)
     print ("Epochs over.")
 
+
 """----------------------------------------Running Evaluation------------------------------------"""
-#Generating 10 sample to validate
+#Generating n sample to validate
 validation_choice = input("Would you like to validate the accuracy of your model?(y/n): ")
 if validation_choice == "y":
     n_of_s = int(input("How many sample do you want to validate: ").strip())
@@ -278,8 +280,56 @@ else:
     ("Entry not valid!")
     exit()
 
+#Close TF Session
+#sess.close()
 
 
+"""--------------------Prepare test data for Running Evaluation----------------------------------"""
 
 
+#Import Test dataset
 
+Loader_test = LD(test_data_dir)
+Directory_test = Loader_test.directory
+Data_test = Loader_test.load_data(Directory_test)
+
+images_test, labels_test = Data_test
+print (Directory_test)
+
+
+#Transform images to 28x28
+images28_test = [sk.transform.resize(img_test, (28, 28)) for img_test in images_test]
+
+#Creating array
+
+img28_test = np.array(images28_test)
+
+#Convert to grey scale
+
+img28_gs_test = sk.color.rgb2gray(img28_test)
+
+
+"""------------------------Running Evaluation against Test Data----------------------------------"""
+
+"""sess2 = tf.Session()
+sess2.run(tf.global_variables_initializer())"""
+
+#Run prediction
+
+predicted_test = sess.run([correct_pred], feed_dict={x: img28_gs_test})[0]
+
+#Calculated correct matches
+
+match_count = sum([int(y == y_) for y, y_ in zip(predicted_test, labels_test)])
+
+#Calculate accuracy
+
+accuracy = float((match_count/len(labels_test))*100)
+
+#Print accuracy
+
+print ("Accuracy(%): {}".format(round(accuracy, 2)))
+
+#Session close
+
+sess.close()
