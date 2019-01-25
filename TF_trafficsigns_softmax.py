@@ -18,18 +18,18 @@ Loader = LD(train_data_dir)
 Directory = Loader.directory
 Data = Loader.load_data(Directory)
 
-images, labels = Data
+images, r_labels = Data
 
 #Turning images list into array
 img = np.array(images)
+s_labels = set(r_labels)
+labels = list(s_labels)
 
 #Resize Images to 28x28 into images28
 images28 = [sk.transform.resize(image, (28,28)) for image in img]
+
 #Convert to array into img28
 img28 = np.array(images28)
-#print img28 array size
-#print (img28.shape)
-
 
 #Convert imges28 to greyscale
 
@@ -37,43 +37,45 @@ Images28_GS = [sk.color.rgb2gray(image_gs) for image_gs in img28]
 
 img28_gs = np.array(Images28_GS)
 
-#print (img28_gs.shape)
-
 
 """"--------------------------Tensorflow part starts here----------------------------------------"""
 
+# input X: 28x28 grayscale images, the first dimension (None) will index the images in the batch
+x = tf.placeholder(tf.float32, [None, 28, 28])
+# correct answers will go here
+y_ = tf.placeholder(tf.float32, [None, 10])
+# weights W[784, 10]   784=28*28
+W = tf.Variable(tf.zeros([784, 10]))
+# biases b[10]
+b = tf.Variable(tf.zeros([10]))
 
+# flatten the images into a single line of pixels
+# -1 in the shape definition means "the only possible dimension that will preserve the number of elements"
+x_flat = tf.reshape(x, [-1, 784])
 
+# The model
+y = tf.nn.softmax(tf.matmul(x_flat, W) + b)
 
-#Initialize the placeholders
-x = tf.placeholder(dtype=tf.float32, shape=[None, 28, 28])
-y = tf.placeholder(dtype=tf.int32, shape=[None])
+# loss function: cross-entropy = - sum( Y_i * log(Yi) )
+#                           Y: the computed output vector
+#                           Y_: the desired output vector
 
-#Flatten he inputdata
-x_flat = tf.contrib.layers.flatten(x)
+# cross-entropy
+# log takes the log of each element, * multiplies the tensors element by element
+# reduce_mean will add all the components in the tensor
+# so here we end up with the total cross-entropy for all images in the batch
+loss = -tf.reduce_mean(y_ * tf.log(y))
 
-#Create fully connected layers
-logits = tf.contrib.layers.fully_connected(x_flat, 62, tf.nn.crelu)
-logits2 = tf.contrib.layers.fully_connected(logits, 62, tf.nn.relu)
+# accuracy of the trained model, between 0 (worst) and 1 (best)
+#correct_pred = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
+#accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
 
-#Define Loss Function
-loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(labels=y,
-                                                                     logits=logits2))
-
-#Define Optimizer
-optimizer = tf.train.AdamOptimizer(learning_rate=0.001).minimize(loss)
-
-#Convert Logits to label indexes
-correct_pred = tf.argmax(logits,1)
-
-#Define accuracy metric
-accuracy = tf.reduce_mean(tf.cast(correct_pred,tf.float32))
-
+# training, learning rate = 0.005
+optimizer = tf.train.GradientDescentOptimizer(0.005).minimize(loss)
 #Recap of the above code
 print("images_flat: ", x_flat)
-print("logits: ", logits)
 print("loss: ", loss)
-print("predicted_labels: ", correct_pred)
+#print("predicted_labels: ", correct_pred)
 
 #Running the NN
 
@@ -84,7 +86,7 @@ sess.run(tf.global_variables_initializer())
 Epochs = int(input("Please insert epochs number-->"))
 for i in range(Epochs+1):
     print("EPOCH", i)
-    _, accuracy_val, loss_val = sess.run([optimizer, accuracy, loss], feed_dict={x: img28_gs, y: labels})
+    _, loss_val = sess.run([optimizer, loss], feed_dict={x: img28_gs, y_: labels})
     if i%10==0:
         print("Loss:",loss_val)
     print ("Epochs over.")
