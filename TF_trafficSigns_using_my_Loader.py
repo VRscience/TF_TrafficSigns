@@ -53,12 +53,11 @@ y = tf.placeholder(dtype=tf.int32, shape=[None])
 x_flat = tf.contrib.layers.flatten(x)
 
 #Create fully connected layers
-logits = tf.contrib.layers.fully_connected(x_flat, 62, tf.nn.crelu)
-logits2 = tf.contrib.layers.fully_connected(logits, 62, tf.nn.relu)
+logits= tf.contrib.layers.fully_connected(logits, 62, tf.nn.relu)
 
 #Define Loss Function
 loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(labels=y,
-                                                                     logits=logits2))
+                                                                     logits=logits))
 
 #Define Optimizer
 optimizer = tf.train.AdamOptimizer(learning_rate=0.001).minimize(loss)
